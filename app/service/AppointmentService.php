@@ -44,7 +44,7 @@ class AppointmentService {
         foreach ($appointments as &$appointment) {
             $appointment['create_date'] = dateTimeBR($appointment['create_date']);
             $appointment['update_date'] = dateTimeBR($appointment['update_date']);
-            $appointment['start_date'] = dateTimeBR($appointment['start_date']);
+            $appointment['start_date_format'] = dateTimeBR($appointment['start_date']);
             $appointment['end_date'] = dateTimeBR($appointment['end_date']);
             $appointment['total_time'] = timeBR($appointment['total_time']);
             
@@ -52,11 +52,11 @@ class AppointmentService {
         return $appointments;
     }
 
-    public function createApontament(Request $request) {
-        $requestData = $request->getParsedBody();
+    public function createApontament($requestData) {
         $beforApontament = $this->findBeforApontament($requestData);
         if($beforApontament) {
             $beforApontament['end_date'] = $requestData['start_date'];
+            $beforApontament = $this->recalculateTotalTime($beforApontament);
             $this->appointment->update($beforApontament);
         }
         
@@ -64,9 +64,7 @@ class AppointmentService {
         if($afterApontament) {
             $requestData['end_date'] = $afterApontament['start_date'];
         }
-        if($requestData['end_date']) {
-            $requestData['total_time'] = diffDate($requestData['start_date'], $requestData['end_date']);
-        }
+        $requestData = $this->recalculateTotalTime($requestData);
         $requestData['seq'] = $this->appointment->findSeq();
         $this->appointment->create($requestData);
     }
@@ -77,9 +75,83 @@ class AppointmentService {
         return $this->appointment->findBeforApontament($idEmployee, $startDate);
     }
 
-    public function findAfterApontament(array $requestData) {
-        $startDate = $requestData['start_date'];
-        $idEmployee = $requestData['id_employee'];
+    public function findAfterApontament(array $data) {
+        $startDate = $data['start_date'];
+        $idEmployee = $data['id_employee'];
         return $this->appointment->findAfterApontament($idEmployee, $startDate);
+    }
+
+    public function updateApontament(Request $request, $idAppointment) {
+        $requestData = $request->getParsedBody();
+        $enabled = $requestData['enabled'];
+        $startDate = $requestData['start_date'];
+        if($enabled == 0) {
+            $this->disable($idAppointment);
+        }
+        else {
+            $this->updateStartDate($idAppointment, $startDate);
+        }
+    }
+
+    private function updateStartDate($idAppointment, $startDate) {
+        $appointment = $this->appointment->find($idAppointment);
+        $afterApontament = $this->findAfterApontament($appointment);
+        $beforApontament = $this->findBeforApontament($appointment);
+        if($beforApontament) {
+            $beforApontament['end_date'] = null;
+            if($afterApontament) {
+                $beforApontament['end_date'] = $afterApontament['start_date'];
+            }
+            $beforApontament = $this->recalculateTotalTime($beforApontament);
+            $this->appointment->update($beforApontament);
+        }
+
+
+        $beforApontament = $this->findBeforApontament([
+            'id_employee' => $appointment['id_employee'],
+            'start_date' => $startDate
+        ]);
+
+        
+        if($beforApontament) {
+            $beforApontament['end_date'] = $startDate;
+            $beforApontament = $this->recalculateTotalTime($beforApontament);
+            $this->appointment->update($beforApontament);
+        }
+        
+        $afterApontament = $this->findAfterApontament([
+            'id_employee' => $appointment['id_employee'],
+            'start_date' => $startDate
+        ]);
+        $appointment['end_date'] = null;
+        if($afterApontament) {
+            $appointment['end_date'] = $afterApontament['start_date'];
+        }
+        $appointment['start_date'] = $startDate;
+        $appointment = $this->recalculateTotalTime($appointment);
+        $this->appointment->update($appointment);
+    }
+    private function disable($idAppointment) {
+        $appointment = $this->appointment->find($idAppointment);
+        $afterApontament = $this->findAfterApontament($appointment);
+        $beforApontament = $this->findBeforApontament($appointment);
+        if($beforApontament) {
+            $beforApontament['end_date'] = null;
+            if($afterApontament) {
+                $beforApontament['end_date'] = $afterApontament['start_date'];
+            }
+            $beforApontament = $this->recalculateTotalTime($beforApontament);
+            $this->appointment->update($beforApontament);
+        }
+            $appointment['enabled'] = 0;
+            $this->appointment->update($appointment);
+    }
+
+    private function recalculateTotalTime($apontament) {
+        $apontament['total_time'] = 0;
+        if($apontament['end_date']) {
+            $apontament['total_time'] = diffDate($apontament['start_date'], $apontament['end_date']);
+        }
+        return $apontament;
     }
 }

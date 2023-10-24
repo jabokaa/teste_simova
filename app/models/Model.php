@@ -33,9 +33,11 @@ class Model{
         if ($orderBy) {
             $sql .= " ORDER BY {$orderBy}";
         }
-        if ($this->range > 0 && $pagina) {
-			$sql .= " LIMIT {$pagina}, {$this->range}";
+        if ($this->range > 0) {
+            $index = $pagina * $this->range;
+			$sql .= " LIMIT {$index}, {$this->range}";
 		}
+
 
         $where = $this->connect->query($sql);
         $where->execute();
@@ -87,6 +89,7 @@ class Model{
         }
         $fields = substr($fields, 0, -1);
         $sql = "UPDATE {$this->table} SET update_date = NOW(), {$fields} WHERE {$this->primaryKey} = {$data[$this->primaryKey]}";
+        $sql = str_replace("''", "null", $sql);
         $update = $this->connect->prepare($sql);
         $update->execute();
 

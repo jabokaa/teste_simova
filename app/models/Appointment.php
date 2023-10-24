@@ -9,7 +9,7 @@ class Appointment extends Model{
 
     public function findBeforApontament($idEmployee, $startDate) {
         $sql = "SELECT * FROM appointment 
-            WHERE id_employee = {$idEmployee} AND start_date <= '{$startDate}'
+            WHERE id_employee = {$idEmployee} AND start_date < '{$startDate}'
             AND enabled = 1 AND DATE(start_date) = DATE('{$startDate}')
             ORDER BY start_date DESC
             LIMIT 1";
@@ -20,7 +20,7 @@ class Appointment extends Model{
 
     public function findAfterApontament($idEmployee, $startDate) {
         $sql = "SELECT * FROM appointment 
-            WHERE id_employee = {$idEmployee} AND start_date >= '{$startDate}'
+            WHERE id_employee = {$idEmployee} AND start_date > '{$startDate}'
             AND enabled = 1 AND DATE(start_date) = DATE('{$startDate}')
             ORDER BY start_date ASC
             LIMIT 1";

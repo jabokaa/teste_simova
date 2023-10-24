@@ -35,19 +35,20 @@
                             <td>{{ appointment.seq }}</td>
                             <td>{{ appointment.create_date }}</td>
                             <td>{{ appointment.update_date }}</td>
-                            <td>{{ appointment.start_date }}</td>
+                            <td>{{ appointment.start_date_format }}</td>
                             <td>{{ appointment.end_date }}</td>
                             <td>{{ appointment.total_time }}</td>
                             <td>{{ appointment.description_work }}</td>
                             <td>
-                                <a href="#editAppointmentModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                                <button onclick="editAppointment('{{ appointment.id }}', '{{ appointment.start_date }}', '{{ appointment.enabled }}')" class="btn btn-outline-info" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></button>
                             </td>
                         </tr> 
                     {% endfor %}
 				</tbody>
 			</table>
 			<div class="clearfix">
-				<div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+				{% set mostrando = total_appointments < range ? total_appointments : range %}
+				<div class="hint-text">Mostrando <b>{{mostrando}}</b> de <b>{{total_appointments}}</b> registros</div>
 				<ul class="pagination">
 					{% set aux = 0 %}
 					{% set total_page = total_appointments/range %}
@@ -103,25 +104,28 @@
 <div id="editAppointmentModal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form>
+			<form id="update_appointment">
+				<input type="hidden" name="id_employee" id="id_employee" value="{{ employee.id }}">
+				<input type="hidden" name="id_appointment" id="id_appointment">
 				<div class="modal-header">						
 					<h4 class="modal-title">Edit Appointment</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<button type="button" class="closed_update close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				</div>
 				<div class="modal-body">					
 					<div class="form-group">
 						<label>Data inicial do Apontamento</label>
-						<input type="datetime-local" class="form-control" name="start_date" required>
+						<input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
 					</div>
-					<div class="form-group" id="end_date" style="display: none;">
+					<div class="form-group">
 						<label>Status</label>
-						<select class="form-control">
+						<select class="form-control" id="enabled" name="enabled">
 							<option value="1">Ativo</option>
-							<option value="1">Inativo</option>
+							<option value="0">Inativo</option>
+						</select>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+					<input type="button" class="btn btn-default closed_update" data-dismiss="modal" value="Cancel">
 					<input type="submit" class="btn btn-info" value="Save">
 				</div>
 			</form>

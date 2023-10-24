@@ -13,17 +13,21 @@ class AppointmentController extends Controller{
 
         $appointmentService = new AppointmentService();
         $appointments = $appointmentService->listAppointments($idEmployee, $page);
-        return $this->view('appointment.index', $appointments);
+        $this->view('appointment.index', $appointments);
+        return $response;
     }
 
     public function create(Request $request, Response $response, array $args = []): Response {
         $appointmentService = new AppointmentService();
-        $appointments = $appointmentService->createApontament($request);
-        return $response;
+        $data = $request->getParsedBody();
+        $appointmentService->createApontament($data);
+        return $response->withRedirect('/apontamentos/'.$data['id_employee']);
     }
 
     public function update(Request $request, Response $response, array $args = []): Response {
-        $response->getBody()->write('update');
+        $appointmentService = new AppointmentService();
+        $idAppointment = $args['id'];
+        $appointments = $appointmentService->updateApontament($request, $idAppointment);
         return $response;
     }
 }
