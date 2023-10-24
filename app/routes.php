@@ -13,5 +13,7 @@ return function (App $app) {
         return $response;
     });
 
-    $app->get('/apontamentos', 'app\controllers\AppointmentController:index');
+    $app->get('/apontamentos/{idEmployee}', 'app\controllers\AppointmentController:index');
+    $app->post('/apontamentos', 'app\controllers\AppointmentController:create');
+    $app->put('/apontamentos/{id}', 'app\controllers\AppointmentController:update');
 };
