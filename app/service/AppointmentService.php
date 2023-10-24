@@ -4,6 +4,7 @@ namespace app\service;
 
 use app\models\Appointment;
 use app\models\Employee;
+use Slim\Http\Request;
 
 class AppointmentService {
 
@@ -26,7 +27,7 @@ class AppointmentService {
             'id_employee' => $idEmplado,
             'enabled' => '1'
         ];
-        $appointments = $this->appointment->where($filter, $page);
+        $appointments = $this->appointment->where($filter, $page, 'start_date DESC');
         $appointments = $this->dataFromater($appointments);
         $totalAppointed = $this->appointment->count($filter);
         $data = [
@@ -49,5 +50,36 @@ class AppointmentService {
             
         }
         return $appointments;
+    }
+
+    public function createApontament(Request $request) {
+        $requestData = $request->getParsedBody();
+        $beforApontament = $this->findBeforApontament($requestData);
+        if($beforApontament) {
+            $beforApontament['end_date'] = $requestData['start_date'];
+            $this->appointment->update($beforApontament);
+        }
+        
+        $afterApontament = $this->findAfterApontament($requestData);
+        if($afterApontament) {
+            $requestData['end_date'] = $afterApontament['start_date'];
+        }
+        if($requestData['end_date']) {
+            $requestData['total_time'] = diffDate($requestData['start_date'], $requestData['end_date']);
+        }
+        $requestData['seq'] = $this->appointment->findSeq();
+        $this->appointment->create($requestData);
+    }
+
+    public function findBeforApontament(array $requestData) {
+        $startDate = $requestData['start_date'];
+        $idEmployee = $requestData['id_employee'];
+        return $this->appointment->findBeforApontament($idEmployee, $startDate);
+    }
+
+    public function findAfterApontament(array $requestData) {
+        $startDate = $requestData['start_date'];
+        $idEmployee = $requestData['id_employee'];
+        return $this->appointment->findAfterApontament($idEmployee, $startDate);
     }
 }

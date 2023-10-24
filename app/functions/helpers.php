@@ -26,24 +26,44 @@
   /**
   * Função para comverter date time para formato BR
   * @param string $data
-  * @return string
+  * @return string|null
   */
-    function dateTimeBR(string $data) {
+    function dateTimeBR($data) {
+        if(!$data) {
+            return null;
+        }
         return date('d/m/Y H:i:s', strtotime($data));
     }
 
   /**
   * Função para comverter date time para formato BR
   * @param string $data
-  * @return string
+  * @return string|null
   */
     function dateBR($data) {
+        if(!$data) {
+            return null;
+        }
         return date('d/m/Y', strtotime($data));
     }
 
     /**
      * Função para converter segundos em h:m:s
      */
-    function timeBR(string $data) {
-        return gmdate("H:i:s", $data);
+    function timeBR(int $time) {
+        if($time < 0) {
+            return "00:00:00";
+        }
+        return gmdate("H:i:s", $time);
+    }
+
+    /**
+     * Função para calcular a diferença entre duas datas em segundos
+     * @param string $dataStart
+     * @param string $dataEnd
+     */
+    function diffDate(string $dataStart, string $dataEnd) {
+        $dataStart = strtotime($dataStart);
+        $dataEnd = strtotime($dataEnd);
+        return $dataEnd - $dataStart;
     }
