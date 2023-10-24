@@ -1,3 +1,9 @@
+.checkbox-input {
+    margin-left: 10px;
+    border-radius: 2px;
+    box-shadow: none;
+    border-color: #dddddd;
+}
 body {
     color: #566787;
     background: #f5f5f5;
