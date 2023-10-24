@@ -33,9 +33,8 @@ use app\src\Load;
          * Renderiza a view
          * @param string $view
          * @param array $data
-         * @return mixed
          */
-        protected function view(string $view, array $data = []): mixed
+        protected function view(string $view, array $data = [])
         {
             $this->load();
             $template = $this->twig->load(str_replace('.', '/', $view) . '.html');
