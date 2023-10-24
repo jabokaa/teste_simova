@@ -8,7 +8,7 @@
 			<div class="table-title">
 				<div class="row">
 					<div class="col-sm-6">
-						<h2>Apontamentos</h2>
+						<h2>Apontamentos de <b>{{ employee.name }}</b></h2>
 					</div>
 					<div class="col-sm-6">
 						<a href="#addAppointmentModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Appointment</span></a>
@@ -18,43 +18,41 @@
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
-						<th>{{total_appointments}}</th>
-						<th></th>
-						<th>---</th>
-						<th>---</th>
-						<th>---</th>
-						<th>---</th>
+						<th>Seq</th>
+						<th>Data criação</th>
+						<th>Data de atualização</th>
+						<th>Data de início</th>
+						<th>Data final</th>
+						<th>Tempo total</th>
+						<th>Descrição do trabalho</th>
+						<th>Ação</th>
 					</tr>
 				</thead>
 				<tbody>
                     {% for appointment in appointments %}
-                    <tr>
-                        <td>{{ appointment.seq }}</td>
-                        <td>{{ appointment.create_date }}</td>
-                        <td>{{ appointment.update_date }}</td>
-                        <td>{{ appointment.start_date }}</td>
-                        <td>{{ appointment.total_time }}</td>
-                        <td>{{ appointment.id_employe }}</td>
-                        <td>{{ appointment.enabled }}</td>
-                        <td>{{ appointment.description_work }}</td>
-                        <td>
-                            <a href="#editAppointmentModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-                            <a href="#deleteAppointmentModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                        </td>
-                    </tr> 
-                {% endfor %}
+                        <tr>
+                            <td>{{ appointment.seq }}</td>
+                            <td>{{ appointment.create_date }}</td>
+                            <td>{{ appointment.update_date }}</td>
+                            <td>{{ appointment.start_date }}</td>
+                            <td>{{ appointment.end_date }}</td>
+                            <td>{{ appointment.total_time }}</td>
+                            <td>{{ appointment.description_work }}</td>
+                            <td>
+                                <a href="#editAppointmentModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                            </td>
+                        </tr> 
+                    {% endfor %}
 				</tbody>
 			</table>
 			<div class="clearfix">
 				<div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
 				<ul class="pagination">
-					<li class="page-item disabled"><a href="#">Previous</a></li>
-					<li class="page-item"><a href="#" class="page-link">1</a></li>
-					<li class="page-item"><a href="#" class="page-link">2</a></li>
-					<li class="page-item active"><a href="#" class="page-link">3</a></li>
-					<li class="page-item"><a href="#" class="page-link">4</a></li>
-					<li class="page-item"><a href="#" class="page-link">5</a></li>
-					<li class="page-item"><a href="#" class="page-link">Next</a></li>
+					{% set aux = 0 %}
+					{% set total_page = total_appointments/range %}
+					{% for aux in range(0, total_page) %}
+						<li class='page-item {% if page == aux %} active {% endif %}'><a href="?page={{ aux }}" class="page-link">{{ aux + 1 }}</a></li>
+					{% endfor %}
 				</ul>
 			</div>
 		</div>
@@ -62,32 +60,32 @@
 </div>
 
 
-<!-- Edit Modal HTML -->
+<!-- Add Modal HTML -->
 <div id="addAppointmentModal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form>
+			<form method="POST" action="/apontamentos">
 				<div class="modal-header">						
-					<h4 class="modal-title">Add Appointment</h4>
+					<h4 class="modal-title">Adicionar apontamento</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				</div>
 				<div class="modal-body">					
 					<div class="form-group">
-						<label>Name</label>
-						<input type="text" class="form-control" required>
+						<label>Data inicial do Apontamento</label>
+						<input type="datetime-local" class="form-control" name="start_date" required>
 					</div>
 					<div class="form-group">
-						<label>Email</label>
-						<input type="email" class="form-control" required>
+						<label>Trabalho Realizado</label>
+						<textarea class="form-control" name="description_work" required></textarea>
 					</div>
 					<div class="form-group">
-						<label>Address</label>
-						<textarea class="form-control" required></textarea>
+						<label>É o último apontamento do dia.</label>
+						<input type="checkbox" value="1">
 					</div>
 					<div class="form-group">
-						<label>Phone</label>
-						<input type="text" class="form-control" required>
-					</div>					
+						<label>Data Final</label>
+						<input type="datetime-local" class="form-control" name="end_date" required>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
