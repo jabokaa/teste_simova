@@ -10,9 +10,9 @@ CREATE TABLE Employee (
 CREATE TABLE Appointment (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     seq BIGINT UNIQUE NOT NULL,
-    create_date DATETIME NOT NULL,
-    update_date DATETIME NOT NULL,
-    start_date DATETIME NOT NULL,
+    create_date DATETIME NULL,
+    update_date DATETIME NULL,
+    start_date DATETIME NULL,
     end_date DATETIME,
     total_time BIGINT DEFAULT 0,
     id_employee BIGINT NOT NULL,
