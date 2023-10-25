@@ -48,14 +48,14 @@
 				<ul class="pagination">
 					{% set aux = 1 %}
 					{% set qtdPages = qtdPages(total_appointments, range) %}
-
 					{% for aux in range(1, qtdPages) %}
 						<li class='page-item {% if page == aux %} active {% endif %}'><a href="?page={{ aux }}" class="page-link">{{ aux }}</a></li>
 					{% endfor %}
 				</ul>
 			</div>
 		</div>
-	</div>        
+	</div>
+		<a href="/" class="btn btn-success"> <span>Voltar</span></a>      
 </div>
 
 
