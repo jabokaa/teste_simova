@@ -16,7 +16,13 @@ class AppointmentService {
         $this->employee = new Employee();
     }
 
-    public function listAppointments($idEmplado, $page) {
+    /**
+     * lista os apontamentos de um funcionario
+     * @param int $idEmplado
+     * @param int $page pagina atual do paginador
+     * @return array
+     */
+    public function listAppointments(int $idEmplado, int $page): array {
         $page = $page ? $page : 0; 
         $employeeData = $this->employee->find($idEmplado);
         if(empty($employeeData)) {
@@ -40,7 +46,13 @@ class AppointmentService {
         return $data;
     }
 
-    private function dataFromater(array $appointments) {
+    /**
+     * formata os dados para exibição
+     * @param array $appointments
+     * @return array
+     */
+    private function dataFromater(array $appointments): array
+    {
         foreach ($appointments as &$appointment) {
             $appointment['create_date'] = dateTimeBR($appointment['create_date']);
             $appointment['update_date'] = dateTimeBR($appointment['update_date']);
@@ -52,14 +64,12 @@ class AppointmentService {
         return $appointments;
     }
 
-    public function createApontament($requestData) {
-        $beforApontament = $this->findBeforApontament($requestData);
-        if($beforApontament) {
-            $beforApontament['end_date'] = $requestData['start_date'];
-            $beforApontament = $this->recalculateTotalTime($beforApontament);
-            $this->appointment->update($beforApontament);
-        }
-        
+    /**
+     * cria um apontamento
+     * @param array $requestData
+     */
+    public function createApontament(array $requestData): void {
+        $this->updateBeforApontamentWithNewApontament($requestData);
         $afterApontament = $this->findAfterApontament($requestData);
         if($afterApontament) {
             $requestData['end_date'] = $afterApontament['start_date'];
@@ -69,20 +79,47 @@ class AppointmentService {
         $this->appointment->create($requestData);
     }
 
-    public function findBeforApontament(array $requestData) {
-        $startDate = $requestData['start_date'];
-        $idEmployee = $requestData['id_employee'];
+    /**
+     * atualiza a data final do apontamento anterior com a data inicial do apontamento atual
+     * @param array $apontament
+     */
+    public function updateBeforApontamentWithNewApontament(array $apontament): void {
+        $beforApontament = $this->findBeforApontament($apontament);
+        if($beforApontament) {
+            $beforApontament['end_date'] = $apontament['start_date'];
+            $beforApontament = $this->recalculateTotalTime($beforApontament);
+            $this->appointment->update($beforApontament);
+        }
+    }
+
+    /**
+     * busca o apontamento anterior que tenha a data mais proxima da data inicial do apontamento atual
+     * @param array $requestData
+     * @return array
+     */
+    public function findBeforApontament(array $apontament): array {
+        $startDate = $apontament['start_date'];
+        $idEmployee = $apontament['id_employee'];
         return $this->appointment->findBeforApontament($idEmployee, $startDate);
     }
 
-    public function findAfterApontament(array $data) {
-        $startDate = $data['start_date'];
-        $idEmployee = $data['id_employee'];
+    /**
+     * busca o apontamento posterior que tenha a data mais proxima da data inicial do apontamento atual
+     * @param array $apontament
+     * @return array
+     */
+    public function findAfterApontament(array $apontament): array {
+        $startDate = $apontament['start_date'];
+        $idEmployee = $apontament['id_employee'];
         return $this->appointment->findAfterApontament($idEmployee, $startDate);
     }
 
-    public function updateApontament(Request $request, $idAppointment) {
-        $requestData = $request->getParsedBody();
+    /**
+     * atualiza um apontamento
+     * @param array $requestData
+     * @param int $idAppointment
+     */
+    public function updateApontament(array $requestData, int $idAppointment): void {
         $enabled = $requestData['enabled'];
         $startDate = $requestData['start_date'];
         if($enabled == 0) {
@@ -93,36 +130,23 @@ class AppointmentService {
         }
     }
 
-    private function updateStartDate($idAppointment, $startDate) {
+    /**
+     * atualiza a data inicial de um apontamento
+     * @param int $idAppointment
+     * @param string $startDate
+     * @return void
+     */
+    private function updateStartDate($idAppointment, $startDate): void {
         $appointment = $this->appointment->find($idAppointment);
-        $afterApontament = $this->findAfterApontament($appointment);
-        $beforApontament = $this->findBeforApontament($appointment);
-        if($beforApontament) {
-            $beforApontament['end_date'] = null;
-            if($afterApontament) {
-                $beforApontament['end_date'] = $afterApontament['start_date'];
-            }
-            $beforApontament = $this->recalculateTotalTime($beforApontament);
-            $this->appointment->update($beforApontament);
-        }
+        $this->updateBeforApontamentWhitAfterApontament($appointment);
 
-
-        $beforApontament = $this->findBeforApontament([
+        $newApontament = [
             'id_employee' => $appointment['id_employee'],
             'start_date' => $startDate
-        ]);
+        ];
+        $this->updateBeforApontamentWithNewApontament($newApontament);
 
-        
-        if($beforApontament) {
-            $beforApontament['end_date'] = $startDate;
-            $beforApontament = $this->recalculateTotalTime($beforApontament);
-            $this->appointment->update($beforApontament);
-        }
-        
-        $afterApontament = $this->findAfterApontament([
-            'id_employee' => $appointment['id_employee'],
-            'start_date' => $startDate
-        ]);
+        $afterApontament = $this->findAfterApontament($newApontament);
         $appointment['end_date'] = null;
         if($afterApontament) {
             $appointment['end_date'] = $afterApontament['start_date'];
@@ -131,8 +155,25 @@ class AppointmentService {
         $appointment = $this->recalculateTotalTime($appointment);
         $this->appointment->update($appointment);
     }
-    private function disable($idAppointment) {
+
+    /**
+     * desabilita um apontamento
+     * @param int $idAppointment
+     * @return void
+     */
+    private function disable($idAppointment): void {
         $appointment = $this->appointment->find($idAppointment);
+        $this->updateBeforApontamentWhitAfterApontament($appointment);
+        $appointment['enabled'] = 0;
+        $this->appointment->update($appointment);
+    }
+
+    /**
+     * atualiza o apontamento anterior com a data final do apontamento posterior
+     * @param array $appointment
+     * @return void
+     */
+    private function updateBeforApontamentWhitAfterApontament(array $appointment): void {
         $afterApontament = $this->findAfterApontament($appointment);
         $beforApontament = $this->findBeforApontament($appointment);
         if($beforApontament) {
@@ -143,11 +184,14 @@ class AppointmentService {
             $beforApontament = $this->recalculateTotalTime($beforApontament);
             $this->appointment->update($beforApontament);
         }
-            $appointment['enabled'] = 0;
-            $this->appointment->update($appointment);
     }
 
-    private function recalculateTotalTime($apontament) {
+    /**
+     * recalcula o tempo total de um apontamento
+     * @param array $apontament
+     * @return array
+     */
+    private function recalculateTotalTime(array $apontament): array {
         $apontament['total_time'] = 0;
         if($apontament['end_date']) {
             $apontament['total_time'] = diffDate($apontament['start_date'], $apontament['end_date']);

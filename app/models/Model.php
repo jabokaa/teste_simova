@@ -16,15 +16,26 @@ class Model{
         $this->connect = Connection::connect();
     }
 
-    public function all() {
+    /*
+    * Retorna todos os registros da tabela
+    * @return array
+    */
+    public function all(): array {
         $sql = "SELECT * FROM {$this->table}";
         $all = $this->connect->query($sql);
         $all->execute();
-
-        return $all->fetchAll();
+        $result = $all->fetchAll();
+        return $result ? $result : []; 
     }
 
-    public function where(array $fieldsValues, $pagina = 0, $orderBy = '') {
+    /**
+     * Retorna os registros da tabela de acordo com os filtros
+     * @param array $fieldsValues
+     * @param int $pagina pagina atual do paginador
+     * @param string $orderBy campo para ordenação
+     * @return array
+     */
+    public function where(array $fieldsValues, int $pagina = 0, string $orderBy = '') {
         $sql = "SELECT * FROM {$this->table} WHERE 1";
         foreach ($fieldsValues as $field => $value) {
             $sql .= " AND {$field} = '{$value}'";
@@ -41,10 +52,15 @@ class Model{
 
         $where = $this->connect->query($sql);
         $where->execute();
-
-        return $where->fetchAll();
+        $result = $where->fetchAll();
+        return $result ? $result : [];
     }
 
+    /**
+     * Retorna a quantidade de registros da tabela de acordo com os filtros
+     * @param array $fieldsValues
+     * @return int
+     */
     public function count(array $fieldsValues) {
         $sql = "SELECT COUNT(*) FROM {$this->table} WHERE 1";
         foreach ($fieldsValues as $field => $value) {
@@ -56,20 +72,34 @@ class Model{
         return $count->fetchColumn();
     }
 
+    /**
+     * Retorna o registro da tabela de acordo com o id
+     * @param int $id
+     * @return array
+     */
     public function find(int $id) {
         $sql = "SELECT * FROM {$this->table} WHERE id = {$id}";
         $find = $this->connect->query($sql);
         $find->execute();
-
-        return $find->fetch();
+        $result = $find->fetch();
+        return $result ? $result : [];
     }
 
-    public function gerRange()
+    /**
+     * Retorna a quantidade exibida por pagina
+     * @return int
+     */
+    public function gerRange(): int
     {
         return $this->range;
     }
 
-    public function create(array $fieldsValues) {
+    /**
+     * Cria um novo registro na tabela
+     * @param array $fieldsValues
+     * @return int
+     */
+    public function create(array $fieldsValues): int {
         $fields = implode(',', array_keys($fieldsValues));
         $values = implode("','", array_values($fieldsValues));
         $sql = "INSERT INTO {$this->table} (create_date, update_date, {$fields}) VALUES (NOW(), NOW(), '{$values}')";
@@ -80,7 +110,12 @@ class Model{
         return $this->connect->lastInsertId();
     }
 
-    public function update($data) {
+    /**
+     * Atualiza um registro na tabela
+     * @param array $data
+     * @return int
+     */
+    public function update(array $data) {
         $fields = '';
         foreach ($data as $field => $value) {
             if ($field != $this->primaryKey) {

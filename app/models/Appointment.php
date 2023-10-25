@@ -7,7 +7,13 @@ class Appointment extends Model{
     protected $table = 'appointment';
     protected $range = 5;
 
-    public function findBeforApontament($idEmployee, $startDate) {
+    /**
+     * Busca o ultimo apontamento antes do apontamento atual
+     * @param int $idEmplado
+     * @param string $startDate
+     * @return array
+     */
+    public function findBeforApontament(int $idEmployee, string $startDate): array {
         $sql = "SELECT * FROM appointment 
             WHERE id_employee = {$idEmployee} AND start_date < '{$startDate}'
             AND enabled = 1 AND DATE(start_date) = DATE('{$startDate}')
@@ -15,10 +21,17 @@ class Appointment extends Model{
             LIMIT 1";
         $beforApontament = $this->connect->query($sql);
         $beforApontament->execute();
-        return $beforApontament->fetch();
+        $result = $beforApontament->fetch();
+        return $result  ? $result : [];
     }
 
-    public function findAfterApontament($idEmployee, $startDate) {
+    /**
+     * Busca o proximo apontamento depois do apontamento atual
+     * @param int $idEmplado
+     * @param string $startDate
+     * @return array
+     */
+    public function findAfterApontament(int $idEmployee, string $startDate) {
         $sql = "SELECT * FROM appointment 
             WHERE id_employee = {$idEmployee} AND start_date > '{$startDate}'
             AND enabled = 1 AND DATE(start_date) = DATE('{$startDate}')
@@ -26,9 +39,14 @@ class Appointment extends Model{
             LIMIT 1";
         $afterApontament = $this->connect->query($sql);
         $afterApontament->execute();
-        return $afterApontament->fetch();
+        $result = $afterApontament->fetch();
+        return $result  ? $result : [];
     }
 
+    /**
+     * Tras o proximo seq para o apontamento
+     * @return int
+     */
     public function findSeq() {
         $sql = "SELECT MAX(seq) FROM appointment";
         $seq = $this->connect->query($sql);
