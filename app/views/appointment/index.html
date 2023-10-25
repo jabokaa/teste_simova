@@ -37,7 +37,7 @@
                             <td>{{ appointment.total_time }}</td>
                             <td>{{ appointment.description_work }}</td>
                             <td>
-                                <button onclick="editAppointment('{{ appointment.id }}', '{{ appointment.start_date }}', '{{ appointment.enabled }}')" class="btn btn-outline-info" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></button>
+                                <button onclick="editAppointment('{{ appointment.id }}', '{{ appointment.start_date }}', '{{ appointment.enabled }}')" class="btn" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></button>
                             </td>
                         </tr> 
                     {% endfor %}
