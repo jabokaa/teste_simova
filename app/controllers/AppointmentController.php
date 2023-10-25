@@ -2,6 +2,7 @@
 namespace app\controllers;
 
 use app\service\AppointmentService;
+use app\validator\AppointmentValidator;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -17,11 +18,15 @@ class AppointmentController extends Controller{
      */
     public function index(Request $request, Response $response, array $args = []): Response {
         $page = $request->getQueryParam("page");
-        $page = $page ? $page : 0;
+        $page = $page ? $page : 1;
         $idEmployee = $args['idEmployee'];
-
+        
         $appointmentService = new AppointmentService();
         $appointments = $appointmentService->listAppointments($idEmployee, $page);
+        $error = $request->getQueryParam("error");
+        if($error) {
+            $appointments['error'] = $error;
+        }
         $this->view('appointment.index', $appointments);
         return $response;
     }
@@ -35,10 +40,16 @@ class AppointmentController extends Controller{
      * 
      */
     public function create(Request $request, Response $response, array $args = []): Response {
-        $appointmentService = new AppointmentService();
-        $data = $request->getParsedBody();
-        $appointmentService->createApontament($data);
-        return $response->withRedirect('/apontamentos/'.$data['id_employee']);
+        try{
+            $data = $request->getParsedBody();
+            AppointmentValidator::create($request);
+            $appointmentService = new AppointmentService();
+            $appointmentService->createApontament($data);
+            return $response->withRedirect('/apontamentos/'.$data['id_employee']);
+        } catch (\Exception $e) {
+            return $response->withRedirect('/apontamentos/'.$data['id_employee'] .'?error='. $e->getMessage());
+            return $response;
+        }
     }
 
     /**

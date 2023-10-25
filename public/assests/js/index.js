@@ -34,8 +34,7 @@ $(document).ready(function(){
                 window.location.href = "/apontamentos/"+$("#id_employee").val();
             },
             error: function(error) {
-                // Ação a ser executada em caso de erro
-                console.error(error); // Exemplo: Exibe o erro no console
+                console.error(error);
             }
         });
     });
@@ -50,3 +49,10 @@ function editAppointment(id, startData, enable) {
     $('#update_appointment').attr('action', '/appointment/'+id);
 }
 
+$(document).ready(function() {
+    setTimeout(function() {
+        $("#error-alert").fadeOut("slow", function() {
+            $(this).remove();
+        });
+    }, 3000);
+});

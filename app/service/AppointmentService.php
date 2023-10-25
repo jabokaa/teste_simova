@@ -121,22 +121,22 @@ class AppointmentService {
     public function updateApontament(array $requestData, int $idAppointment): void {
         $enabled = $requestData['enabled'];
         $startDate = $requestData['start_date'];
+        $appointment = $this->appointment->find($idAppointment);
         if($enabled == 0) {
-            $this->disable($idAppointment);
+            $this->disable($appointment);
         }
         else {
-            $this->updateStartDate($idAppointment, $startDate);
+            $this->updateStartDate($appointment, $startDate);
         }
     }
 
     /**
      * atualiza a data inicial de um apontamento
-     * @param int $idAppointment
+     * @param array $appointment
      * @param string $startDate
      * @return void
      */
-    private function updateStartDate($idAppointment, $startDate): void {
-        $appointment = $this->appointment->find($idAppointment);
+    private function updateStartDate(array $appointment, string $startDate): void {
         $this->updateBeforApontamentWhitAfterApontament($appointment);
 
         $newApontament = [
@@ -157,11 +157,10 @@ class AppointmentService {
 
     /**
      * desabilita um apontamento
-     * @param int $idAppointment
+     * @param array $appointment
      * @return void
      */
-    private function disable($idAppointment): void {
-        $appointment = $this->appointment->find($idAppointment);
+    private function disable(array $appointment): void {
         $this->updateBeforApontamentWhitAfterApontament($appointment);
         $appointment['enabled'] = 0;
         $this->appointment->update($appointment);
