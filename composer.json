@@ -11,5 +11,8 @@
         "files": [
             "app/functions/helpers.php"
         ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
     }
 }

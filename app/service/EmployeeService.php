@@ -10,8 +10,8 @@ class EmployeeService {
 
     private $employee;
 
-    public function __construct() {
-        $this->employee = new Employee();
+    public function __construct(Employee $employee) {
+        $this->employee = $employee;
     }
 
     /**

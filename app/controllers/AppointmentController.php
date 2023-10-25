@@ -10,6 +10,13 @@ use Slim\Http\Response;
 class AppointmentController extends Controller{
 
     /**
+     * @var AppointmentService
+     */
+    private $appointmentService;
+    public function __construct() {
+        $this->appointmentService = new AppointmentService();
+    }
+    /**
      * lista os apontamentos de um funcionario
      * @param Request $request
      * @param Response $response
@@ -44,8 +51,7 @@ class AppointmentController extends Controller{
         try{
             $data = $request->getParsedBody();
             AppointmentValidator::create($request);
-            $appointmentService = new AppointmentService();
-            $appointmentService->createApontament($data);
+            $this->appointmentService->createApontament($data);
             Flash::addMenssagem('Apontamento criado com sucesso!');
             return $response->withRedirect('/apontamentos/'.$data['id_employee']);
         } catch (\Exception $e) {
@@ -64,9 +70,9 @@ class AppointmentController extends Controller{
      */
     public function update(Request $request, Response $response, array $args = []): Response {
         $requestData = $request->getParsedBody();
-        $appointmentService = new AppointmentService();
+        
         $idAppointment = $args['id'];
-        $appointmentService->updateApontament($requestData, $idAppointment);
+        $this->appointmentService->updateApontament($requestData, $idAppointment);
         Flash::addMenssagem('Apontamento atualizado com sucesso!');
         return $response;
     }

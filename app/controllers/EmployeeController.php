@@ -11,6 +11,15 @@ use Slim\Http\Response;
 class EmployeeController extends Controller{
 
     /**
+     * @var EmployeeService
+     */
+    private $employeeService;
+
+    public function __construct() {
+        $this->employeeService = new EmployeeService();
+    }
+
+    /**
      * lista os apontamentos de um funcionario
      * @param Request $request
      * @param Response $response
@@ -21,9 +30,7 @@ class EmployeeController extends Controller{
     public function index(Request $request, Response $response, array $args = []): Response {
         $page = $request->getQueryParam("page");
         $page = $page ? $page : 1;
-        
-        $employeeService = new EmployeeService();
-        $employees = $employeeService->listEmployee($page);
+        $employees = $this->employeeService->listEmployee($page);
         $this->view('employee.index', $employees);
         return $response;
     }
@@ -39,8 +46,7 @@ class EmployeeController extends Controller{
     public function create(Request $request, Response $response, array $args = []): Response {
         try{
             $data = $request->getParsedBody();
-            $employeeService = new EmployeeService();
-            $employeeService->create($data);
+            $this->employeeService->create($data);
             Flash::addMenssagem('Funcionario criado com sucesso!');
             return $response->withRedirect('/');
         } catch (\Exception $e) {
