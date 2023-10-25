@@ -13,7 +13,11 @@ $count = new \Twig\TwigFunction("count", function($data) {
 });
 
 $qtdPages = new \Twig\TwigFunction("qtdPages", function($totlaElements, $qtdElementsPerPage) {
-    return (ceil($totlaElements / $qtdElementsPerPage));
+    $qtdPages = (ceil($totlaElements / $qtdElementsPerPage));
+    if($qtdPages == 0) {
+        $qtdPages = 1;
+    }
+    return ($qtdPages);
 });
 
 $flash = new \Twig\TwigFunction("flash", function() {
