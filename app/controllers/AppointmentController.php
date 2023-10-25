@@ -1,6 +1,7 @@
 <?php
 namespace app\controllers;
 
+use app\functions\Flash;
 use app\service\AppointmentService;
 use app\validator\AppointmentValidator;
 use Slim\Http\Request;
@@ -45,10 +46,11 @@ class AppointmentController extends Controller{
             AppointmentValidator::create($request);
             $appointmentService = new AppointmentService();
             $appointmentService->createApontament($data);
+            Flash::addMenssagem('Apontamento criado com sucesso!');
             return $response->withRedirect('/apontamentos/'.$data['id_employee']);
         } catch (\Exception $e) {
-            return $response->withRedirect('/apontamentos/'.$data['id_employee'] .'?error='. $e->getMessage());
-            return $response;
+            Flash::addMenssagem($e->getMessage() , 'danger', $e->getCode());
+            return $response->withRedirect('/apontamentos/'.$data['id_employee']);
         }
     }
 
@@ -65,6 +67,7 @@ class AppointmentController extends Controller{
         $appointmentService = new AppointmentService();
         $idAppointment = $args['id'];
         $appointmentService->updateApontament($requestData, $idAppointment);
+        Flash::addMenssagem('Apontamento atualizado com sucesso!');
         return $response;
     }
 }

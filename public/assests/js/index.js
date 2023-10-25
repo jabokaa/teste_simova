@@ -51,7 +51,7 @@ function editAppointment(id, startData, enable) {
 
 $(document).ready(function() {
     setTimeout(function() {
-        $("#error-alert").fadeOut("slow", function() {
+        $(".flash").fadeOut("slow", function() {
             $(this).remove();
         });
     }, 3000);

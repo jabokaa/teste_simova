@@ -1,6 +1,9 @@
 <?php
 
 //  criando funções para o twig
+
+use app\functions\Flash;
+
 $teste = new \Twig\TwigFunction("teste", function($data) {
     echo($data);
 });
@@ -13,8 +16,13 @@ $qtdPages = new \Twig\TwigFunction("qtdPages", function($totlaElements, $qtdElem
     return (ceil($totlaElements / $qtdElementsPerPage));
 });
 
+$flash = new \Twig\TwigFunction("flash", function() {
+    echo Flash::showMenssagem();
+});
+
 return [
     $teste,
     $count,
-    $qtdPages
+    $qtdPages,
+    $flash
 ];
