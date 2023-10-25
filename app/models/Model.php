@@ -7,7 +7,9 @@ class Model{
 
     protected $connect;
     protected $table = '';
-    protected $range = 0;
+    protected $range = 5;
+    protected $create_date = true;
+    protected $update_date = true;
 
     protected $primaryKey = 'id';
 
@@ -20,8 +22,13 @@ class Model{
     * Retorna todos os registros da tabela
     * @return array
     */
-    public function all(): array {
+    public function all(int $page = 1): array {
         $sql = "SELECT * FROM {$this->table}";
+        if ($this->range > 0) {
+            $page = $page ? $page : 1; 
+            $index = ($page - 1) * $this->range;
+			$sql .= " LIMIT {$index}, {$this->range}";
+		}
         $all = $this->connect->query($sql);
         $all->execute();
         $result = $all->fetchAll();
@@ -62,7 +69,7 @@ class Model{
      * @param array $fieldsValues
      * @return int
      */
-    public function count(array $fieldsValues) {
+    public function count(array $fieldsValues = []) {
         $sql = "SELECT COUNT(*) FROM {$this->table} WHERE 1";
         foreach ($fieldsValues as $field => $value) {
             $sql .= " AND {$field} = '{$value}'";
@@ -90,7 +97,7 @@ class Model{
      * Retorna a quantidade exibida por pagina
      * @return int
      */
-    public function gerRange(): int
+    public function getRange(): int
     {
         return $this->range;
     }
@@ -103,7 +110,16 @@ class Model{
     public function create(array $fieldsValues): int {
         $fields = implode(',', array_keys($fieldsValues));
         $values = implode("','", array_values($fieldsValues));
-        $sql = "INSERT INTO {$this->table} (create_date, update_date, {$fields}) VALUES (NOW(), NOW(), '{$values}')";
+        $values = "'{$values}'";
+        if($this->create_date){
+            $fields .= ',create_date';
+            $values .= ",NOW()";
+        }
+        if($this->update_date){
+            $fields .= ',update_date';
+            $values .= ",NOW()";
+        }
+        $sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$values})";
         $sql = str_replace("''", "null", $sql);
         $create = $this->connect->prepare($sql);
         $create->execute();
@@ -124,7 +140,10 @@ class Model{
             }
         }
         $fields = substr($fields, 0, -1);
-        $sql = "UPDATE {$this->table} SET update_date = NOW(), {$fields} WHERE {$this->primaryKey} = {$data[$this->primaryKey]}";
+        if($this->update_date){
+            $fields .= ',update_date = NOW()';
+        }
+        $sql = "UPDATE {$this->table} SET {$fields} WHERE {$this->primaryKey} = {$data[$this->primaryKey]}";
         $sql = str_replace("''", "null", $sql);
         $update = $this->connect->prepare($sql);
         $update->execute();

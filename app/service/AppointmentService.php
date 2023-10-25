@@ -37,7 +37,7 @@ class AppointmentService {
         $totalAppointed = $this->appointment->count($filter);
         $data = [
             'employee' => $employeeData,
-            'range' => $this->appointment->gerRange(),
+            'range' => $this->appointment->getRange(),
             'total_appointments' => $totalAppointed,
             'appointments' => $appointments,
             'page' => $page,

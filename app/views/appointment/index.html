@@ -13,7 +13,7 @@
 						<h2>Apontamentos de <b>{{ employee.name }}</b></h2>
 					</div>
 					<div class="col-sm-6">
-						<a href="#addAppointmentModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Appointment</span></a>
+						<a href="#addAppointmentModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Novo Apontamento</span></a>
 					</div>
 				</div>
 			</div>
@@ -21,8 +21,6 @@
 				<thead>
 					<tr>
 						<th>Seq</th>
-						<th>Data criação</th>
-						<th>Data de atualização</th>
 						<th>Data de início</th>
 						<th>Data final</th>
 						<th>Tempo total</th>
@@ -34,8 +32,6 @@
                     {% for appointment in appointments %}
                         <tr>
                             <td>{{ appointment.seq }}</td>
-                            <td>{{ appointment.create_date }}</td>
-                            <td>{{ appointment.update_date }}</td>
                             <td>{{ appointment.start_date_format }}</td>
                             <td>{{ appointment.end_date }}</td>
                             <td>{{ appointment.total_time }}</td>

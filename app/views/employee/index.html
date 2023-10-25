@@ -1,0 +1,90 @@
+{% extends 'layout.html' %}
+
+{% block master %}
+<body>
+<link rel="stylesheet" href="../assests/css/index.css">
+<div class="container-xl">
+	<div class="table-responsive">
+		{{ flash() }}
+		<div class="table-wrapper">
+			<div class="table-title">
+				<div class="row">
+					<div class="col-sm-6">
+						<h2>Funcionarios</b></h2>
+					</div>
+					<div class="col-sm-6">
+						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Novo Funcionario</span></a>
+					</div>
+				</div>
+			</div>
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Código</th>
+						<th>Nome</th>
+						<th>Apontamentos</th>
+					</tr>
+				</thead>
+				<tbody>
+                    {% for employee in employees %}
+                        <tr>
+							<td>{{ employee.code }}</td>
+                            <td>{{ employee.name }}</td>
+							<td class="text-center"><a href="/apontamentos/{{ employee.id }}"><i class="material-icons">&#xE417;</i></a></td>
+                        </tr> 
+                    {% endfor %}
+				</tbody>
+			</table>
+			<div class="clearfix">
+				<div class="hint-text">Mostrando <b>{{ count(employees) }}</b> de <b>{{total_employee}}</b> registros</div>
+				<ul class="pagination">
+					{% set aux = 1 %}
+					{% set qtdPages = qtdPages(total_employee, range) %}
+
+					{% for aux in range(1, qtdPages) %}
+						<li class='page-item {% if page == aux %} active {% endif %}'><a href="?page={{ aux }}" class="page-link">{{ aux }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>        
+</div>
+
+
+<!-- Add Modal HTML -->
+<div id="addEmployeeModal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form method="POST" action="/employee">
+				<div class="modal-header">						
+					<h4 class="modal-title">Adicionar Funcionarios</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				</div>
+				<div class="modal-body">					
+					<div class="form-group">
+						<label>Nome</label>
+						<input type="text" class="form-control" name="name" required>
+					</div>
+					<div class="form-group">
+						<label>Código</label>
+						<input type="text" class="form-control" name="code" required>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+					<input type="submit" class="btn btn-success" value="Add">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script src="../assests/js/index.js"></script>
+<script>
+
+</script>
+
+</body>
+</html>
+
+{% endblock %}

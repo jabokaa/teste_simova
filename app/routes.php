@@ -7,13 +7,10 @@ use Slim\App;
 
 
 return function (App $app) {
-    
-    $app->get('/', function (Request $request, Response $response) {
-        $response->getBody()->write('Hello world!');
-        return $response;
-    });
 
+    $app->get('/', 'app\controllers\EmployeeController:index');
     $app->get('/apontamentos/{idEmployee}', 'app\controllers\AppointmentController:index');
+    $app->post('/employee', 'app\controllers\EmployeeController:create');
     $app->post('/apontamentos', 'app\controllers\AppointmentController:create');
     $app->put('/apontamentos/{id}', 'app\controllers\AppointmentController:update');
 };
