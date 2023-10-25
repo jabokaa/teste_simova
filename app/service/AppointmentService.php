@@ -23,7 +23,6 @@ class AppointmentService {
      * @return array
      */
     public function listAppointments(int $idEmplado, int $page): array {
-        $page = $page ? $page : 0; 
         $employeeData = $this->employee->find($idEmplado);
         if(empty($employeeData)) {
             throw new \Exception('Employee not found');

@@ -31,11 +31,11 @@ class Model{
     /**
      * Retorna os registros da tabela de acordo com os filtros
      * @param array $fieldsValues
-     * @param int $pagina pagina atual do paginador
+     * @param int $page pagina atual do paginador
      * @param string $orderBy campo para ordenação
      * @return array
      */
-    public function where(array $fieldsValues, int $pagina = 0, string $orderBy = '') {
+    public function where(array $fieldsValues, int $page = 1, string $orderBy = '') {
         $sql = "SELECT * FROM {$this->table} WHERE 1";
         foreach ($fieldsValues as $field => $value) {
             $sql .= " AND {$field} = '{$value}'";
@@ -45,7 +45,8 @@ class Model{
             $sql .= " ORDER BY {$orderBy}";
         }
         if ($this->range > 0) {
-            $index = $pagina * $this->range;
+            $page = $page ? $page : 1; 
+            $index = ($page - 1) * $this->range;
 			$sql .= " LIMIT {$index}, {$this->range}";
 		}
 

@@ -47,13 +47,13 @@
 				</tbody>
 			</table>
 			<div class="clearfix">
-				{% set mostrando = total_appointments < range ? total_appointments : range %}
-				<div class="hint-text">Mostrando <b>{{mostrando}}</b> de <b>{{total_appointments}}</b> registros</div>
+				<div class="hint-text">Mostrando <b>{{ count(appointments) }}</b> de <b>{{total_appointments}}</b> registros</div>
 				<ul class="pagination">
-					{% set aux = 0 %}
-					{% set total_page = total_appointments/range %}
-					{% for aux in range(0, total_page) %}
-						<li class='page-item {% if page == aux %} active {% endif %}'><a href="?page={{ aux }}" class="page-link">{{ aux + 1 }}</a></li>
+					{% set aux = 1 %}
+					{% set qtdPages = qtdPages(total_appointments, range) %}
+
+					{% for aux in range(1, qtdPages) %}
+						<li class='page-item {% if page == aux %} active {% endif %}'><a href="?page={{ aux }}" class="page-link">{{ aux }}</a></li>
 					{% endfor %}
 				</ul>
 			</div>
