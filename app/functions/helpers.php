@@ -26,11 +26,11 @@
   /**
   * Função para comverter date time para formato BR
   * @param string $data
-  * @return string|null
+  * @return string
   */
     function dateTimeBR($data) {
         if(!$data) {
-            return null;
+            return 'Não informado';
         }
         return date('d/m/Y H:i:s', strtotime($data));
     }
@@ -38,11 +38,11 @@
   /**
   * Função para comverter date time para formato BR
   * @param string $data
-  * @return string|null
+  * @return string
   */
     function dateBR($data) {
         if(!$data) {
-            return null;
+            return 'Não informado';
         }
         return date('d/m/Y', strtotime($data));
     }
