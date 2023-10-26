@@ -1,7 +1,9 @@
 <h1>Alterações na Regra de Negócio</h1>
 Este repositório contém informações sobre as recentes alterações na regra de negócio do projeto. Abaixo estão listados os principais ajustes realizados:
 
-- Restrição para a inclusão de uma data de término: Agora, só é permitida a inclusão de uma data de término se esta for a maior hora do dia.
+- Restrição para a inclusão de uma data de término: Agora, só é permitida a inclusão de uma data de término se esta for a maior data do mesmo dia da data de inicio.
+
+- A data fim deve ser do mesmo dia da data inicio
 
 - Tratamento de datas de início e fim: Em cenários onde não existe nenhum horário maior no dia e não foi especificada uma data de término, a data de início será automaticamente considerada como a data de término.
 
@@ -63,7 +65,7 @@ composer install
 
 php -S localhost:8080 -t public
 
-Isso iniciará um servidor de desenvolvimento local que estará acessível em http://localhost:8081 no seu navegador.
+Isso iniciará um servidor de desenvolvimento local que estará acessível em http://localhost:8080 no seu navegador.
 
 Agora o sistema está em execução
 
@@ -92,3 +94,14 @@ CREATE TABLE Appointment (
 );
 
 ```
+
+
+<h4>Rotas criadas:</h4>
+
+| Rota                          | Descrição                         |Tipo                              |
+| ------------- --------------- | --------------------------------- |--------------------------------- |
+| /                             | Rota para  lista os funcionarios  |GET                               |
+| apontamentos/{idFuncionario}  | Lista dos apontamentos            |GET                               |
+| employee                      | Criação de um funcionario         |POST                              |
+| apontamentos                  | Criação de um apontamento        |POST                             |
+| apontamentos/{id}             | Atualização de um apontamento     |PUT                               |
