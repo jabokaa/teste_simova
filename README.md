@@ -70,31 +70,6 @@ Isso iniciará um servidor de desenvolvimento local que estará acessível em ht
 Agora o sistema está em execução
 
 
-```
-# Script mysql
-
-CREATE TABLE Employee (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    code VARCHAR(10) NOT NULL UNIQUE NOT NULL
-);
-
-CREATE TABLE Appointment (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    seq BIGINT UNIQUE NOT NULL,
-    create_date DATETIME NULL,
-    update_date DATETIME NULL,
-    start_date DATETIME NULL,
-    end_date DATETIME,
-    total_time BIGINT DEFAULT 0,
-    id_employee BIGINT NOT NULL,
-    enabled BOOLEAN NOT NULL DEFAULT true,
-    description_work VARCHAR(30) NOT NULL,
-    FOREIGN KEY (id_employee) REFERENCES Employee(id)
-);
-
-```
-
 
 <h4>Rotas criadas:</h4>
 

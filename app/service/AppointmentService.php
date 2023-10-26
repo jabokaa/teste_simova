@@ -192,9 +192,10 @@ class AppointmentService {
      */
     private function recalculateTotalTime(array $apontament): array {
         $apontament['total_time'] = 0;
-        if($apontament['end_date']) {
-            $apontament['total_time'] = DateUtils::diffDate($apontament['start_date'], $apontament['end_date']);
+        if(!$apontament['end_date']) {
+            $apontament['end_date'] = $apontament['start_date'];
         }
+        $apontament['total_time'] = DateUtils::diffDate($apontament['start_date'], $apontament['end_date']);
         return $apontament;
     }
 }
