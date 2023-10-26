@@ -2,6 +2,7 @@
 namespace app\controllers;
 
 use app\functions\Flash;
+use app\models\Employee;
 use app\service\AppointmentService;
 use app\service\EmployeeService;
 use app\validator\AppointmentValidator;
@@ -16,7 +17,8 @@ class EmployeeController extends Controller{
     private $employeeService;
 
     public function __construct() {
-        $this->employeeService = new EmployeeService();
+        $employee = new Employee();
+        $this->employeeService = new EmployeeService($employee);
     }
 
     /**

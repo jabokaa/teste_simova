@@ -2,6 +2,8 @@
 namespace app\controllers;
 
 use app\functions\Flash;
+use app\models\Appointment;
+use app\models\Employee;
 use app\service\AppointmentService;
 use app\validator\AppointmentValidator;
 use Slim\Http\Request;
@@ -14,7 +16,9 @@ class AppointmentController extends Controller{
      */
     private $appointmentService;
     public function __construct() {
-        $this->appointmentService = new AppointmentService();
+        $appointments = new Appointment();
+        $employees = new Employee();
+        $this->appointmentService = new AppointmentService($appointments, $employees);
     }
     /**
      * lista os apontamentos de um funcionario
@@ -29,8 +33,7 @@ class AppointmentController extends Controller{
         $page = $page ? $page : 1;
         $idEmployee = $args['idEmployee'];
         
-        $appointmentService = new AppointmentService();
-        $appointments = $appointmentService->listAppointments($idEmployee, $page);
+        $appointments = $this->appointmentService->listAppointments($idEmployee, $page);
         $error = $request->getQueryParam("error");
         if($error) {
             $appointments['error'] = $error;

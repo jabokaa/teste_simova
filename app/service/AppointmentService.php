@@ -11,9 +11,9 @@ class AppointmentService {
     private $appointment;
     private $employee;
 
-    public function __construct() {
-        $this->appointment = new Appointment();
-        $this->employee = new Employee();
+    public function __construct(Appointment $apontament, Employee $employee) {
+        $this->appointment = $apontament;
+        $this->employee = $employee;
     }
 
     /**
