@@ -98,10 +98,10 @@ CREATE TABLE Appointment (
 
 <h4>Rotas criadas:</h4>
 
-| Rota                          | Descrição                         |Tipo                              |
-| ------------- --------------- | --------------------------------- |--------------------------------- |
-| /                             | Rota para  lista os funcionarios  |GET                               |
-| apontamentos/{idFuncionario}  | Lista dos apontamentos            |GET                               |
-| employee                      | Criação de um funcionario         |POST                              |
-| apontamentos                  | Criação de um apontamento        |POST                             |
-| apontamentos/{id}             | Atualização de um apontamento     |PUT                               |
+| Rota                          | Descrição                      | Tipo  |
+| ----------------------------- | ------------------------------- | ----- |
+| /                             | Lista de Funcionários          | GET   |
+| apontamentos/{idFuncionario}  | Lista de Apontamentos           | GET   |
+| employee                      | Criação de Funcionário         | POST  |
+| apontamentos                  | Criação de Apontamento          | POST  |
+| apontamentos/{id}             | Atualização de Apontamento     | PUT   |
