@@ -4,6 +4,7 @@ namespace app\service;
 
 use app\models\Appointment;
 use app\models\Employee;
+use app\utils\DateUtils;
 use Slim\Http\Request;
 
 class AppointmentService {
@@ -53,11 +54,11 @@ class AppointmentService {
     private function dataFromater(array $appointments): array
     {
         foreach ($appointments as &$appointment) {
-            $appointment['create_date'] = dateTimeBR($appointment['create_date']);
-            $appointment['update_date'] = dateTimeBR($appointment['update_date']);
-            $appointment['start_date_format'] = dateTimeBR($appointment['start_date']);
-            $appointment['end_date'] = dateTimeBR($appointment['end_date']);
-            $appointment['total_time'] = timeBR($appointment['total_time']);
+            $appointment['create_date'] = DateUtils::dateTimeBR($appointment['create_date']);
+            $appointment['update_date'] = DateUtils::dateTimeBR($appointment['update_date']);
+            $appointment['start_date_format'] = DateUtils::dateTimeBR($appointment['start_date']);
+            $appointment['end_date'] = DateUtils::dateTimeBR($appointment['end_date']);
+            $appointment['total_time'] = DateUtils::time($appointment['total_time']);
             
         }
         return $appointments;
@@ -192,7 +193,7 @@ class AppointmentService {
     private function recalculateTotalTime(array $apontament): array {
         $apontament['total_time'] = 0;
         if($apontament['end_date']) {
-            $apontament['total_time'] = diffDate($apontament['start_date'], $apontament['end_date']);
+            $apontament['total_time'] = DateUtils::diffDate($apontament['start_date'], $apontament['end_date']);
         }
         return $apontament;
     }
